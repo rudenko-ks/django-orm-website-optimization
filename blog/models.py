@@ -13,8 +13,7 @@ class PostQuerySet(models.QuerySet):
 
     def popular(self):
         return self.annotate(likes_count=Count('likes', distinct=True)) \
-                .prefetch_related('author') \
-                .order_by('-likes_count')
+                   .order_by('-likes_count')
 
     def fetch_with_comments_count(self):
         popular_posts_ids = [post.id for post in self]
