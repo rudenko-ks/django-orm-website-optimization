@@ -31,8 +31,7 @@ def index(request):
                                      .fetch_with_comments_count()
 
     fresh_posts = Post.objects.prefetch_related('author') \
-                              .prefetch_related(Prefetch('tags', queryset=Tag.objects
-                                                         .annotate(posts_count=Count('posts')))) \
+                              .fetch_tag_with_posts_count() \
                               .annotate(comments_count=Count('comments')) \
                               .order_by('published_at')
     most_fresh_posts = list(fresh_posts)[-5:]
@@ -108,8 +107,7 @@ def tag_filter(request, tag_title):
 
     related_posts = tag.posts.all()[:20].annotate(comments_count=Count('comments')) \
                                         .prefetch_related('author') \
-                                        .prefetch_related(Prefetch('tags', queryset=Tag.objects
-                                                                   .annotate(posts_count=Count('posts'))))
+                                        .fetch_tag_with_posts_count()
     context = {
         'tag':
             tag.title,
